@@ -15,3 +15,7 @@ $ yarn start
 ```
 $ yarn logs
 ```
+- Stop run
+```
+$ yarn stop
+```

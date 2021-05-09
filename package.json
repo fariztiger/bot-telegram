@@ -13,7 +13,7 @@
   "scripts": {
     "migrate:db": "./node_modules/.bin/knex migrate:latest",
     "start": "yarn migrate:db && ./node_modules/.bin/pm2 start bot.js --watch",
-    "stop": "yarn migrate:db && ./node_modules/.bin/pm2 stop bot.js",
+    "stop": "./node_modules/.bin/pm2 stop bot.js",
     "logs": "../node_modules/.bin/pm2 logs"
   },
   "author": "phamductinhkma@gmail.com",
