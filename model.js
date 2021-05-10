@@ -6,6 +6,7 @@ function exportConfig() {
 const STEP_NONE = 0;
 const STEP_USERNAME = 1;
 const STEP_WALLET = 2;
+const STEP_CAPTCHA = 3;
 
 module.exports = {
   listUser,
@@ -18,6 +19,7 @@ module.exports = {
   getPointRef,
   STEP_USERNAME,
   STEP_WALLET,
+  STEP_CAPTCHA,
   STEP_NONE
 }
 
@@ -36,14 +38,15 @@ async function createMember(params) {
     return 'done';
   }
   if (member) {
-    return false;
+    return 'old';
   }
   return knex('members').insert({
     id_telegram: params.id,
     username_telegram: params.username,
     first_name: params.first_name,
     last_name: params.last_name,
-    ref: params.ref
+    ref: params.ref,
+    captcha: params.captcha
   })
 }
 
@@ -91,6 +94,7 @@ async function getPointRef(userId) {
   const result = await knex.count('id as number')
     .from('members')
     .where('ref', userId)
+    .andWhere('is_done', 1)
     .first();
   return result.number;
 }

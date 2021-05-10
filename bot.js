@@ -1,6 +1,8 @@
 require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const token = process.env.TOKEN;
+const svgCaptcha = require('svg-captcha');
+const svgToImg = require("svg-to-img");
 
 const linkPostTwiiter = 'https://google.com';
 const linkChanelTele = 'https://t.me/joinchat/VgrTEbtiAPQ3NGI1';
@@ -19,6 +21,7 @@ const {
   getPointRef,
   STEP_USERNAME,
   STEP_WALLET,
+  STEP_CAPTCHA,
   STEP_NONE
 } = require('./model');
 
@@ -30,6 +33,7 @@ const bot = new TelegramBot(token, {
 
 const EVENT_CHECK_MISSION = 'check_mission';
 const EVENT_USERNAME = 'username_twitter';
+const EVENT_REFRESH_CAPTCHA = 'refresh_captcha';
 
 const keyboards = {
   main: {
@@ -59,12 +63,22 @@ bot.onText(/\/start/, async (msg) => {
     return;
   }
   const ref = msg.text.replace("/start", "").trim();
-  const result = await createMember({...msg.from, ref});
+  const captcha = svgCaptcha.create();
+  const result = await createMember({...msg.from, ref, captcha: captcha.text});
   if (result === 'done') {
     return bot.sendMessage(msg.chat.id, listText.done(msg.from.id), keyboards.done);
   }
-  bot.sendMessage(msg.chat.id, listText.startStep, { reply_markup: keyboards.main });
-});
+  return bot.sendMessage(msg.chat.id, listText.startStep, {reply_markup: keyboards.main});
+  // if (result === 'old') {
+  //   return bot.sendMessage(msg.chat.id, listText.startStep, {reply_markup: keyboards.main});
+  // }
+  // const imgBase64 = await svgToImg.from(captcha.data).toPng({encoding: 'base64'});
+  // return bot.sendPhoto(
+  //   msg.chat.id,
+  //   Buffer.from(imgBase64, 'base64'),
+  //   {caption: listText.enterCaptcha, reply_markup: {inline_keyboard: [[{'text': 'Refresh', 'callback_data': 'df'}]]}}
+  // )
+})
 
 // validate enter text username and wallet
 bot.onText(/\.*/, async (msg) => {
@@ -90,7 +104,7 @@ bot.onText(/\.*/, async (msg) => {
     return;
   }
   if (step === STEP_WALLET) {
-    if (msg.text[0] !== "@") {
+    if (!(/^(0x){1}[0-9a-fA-F]{40}$/i.test(msg.text))) {
       return bot.sendMessage(msg.chat.id,listText.validWallet)
     }
     await bot.sendMessage(msg.chat.id, listText.walletOk(msg.text), keyboards.done)
@@ -172,6 +186,7 @@ bot.on("callback_query", async (callbackQuery) => {
     bot.answerCallbackQuery(id);
     return;
   }
+  if (data = EVENT_REFRESH_CAPTCHA) {}
 });
 
 // =============== list event keyboard

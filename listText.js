@@ -21,7 +21,7 @@ module.exports = {
 Press 👆 *${check}* to check completed tasks.`
   },
 
-  validWallet: "Invalid address please submit your address with @:",
+  validWallet: "Invalid wallet address, please try againd:",
 
   walletOk: (address) => {
     return `*${address} ✅* \n\nYou have successfully bind your wallet address.
@@ -42,6 +42,7 @@ See more information or need help, click keyboard *${keyRules}*.`
   addressWl: (address) => {
     return `Your wallet address: *${address}*`;
   },
-  sendAddress: `*⚠️ Please enter it correctly as you are only allowed to enter once,
-\nSend your BEP20 (BSC) address, starting with @:*`
+  sendAddress: `*⚠️ Please enter it correctly as you are only allowed to enter once.
+\n👛 Send your BEP20 (BSC) address:*`,
+  enterCaptcha: "Please enter the verification code:",
 }
