@@ -1,5 +1,5 @@
 {
-  "name": "docker-ethereum",
+  "name": "bot-telegram",
   "version": "1.0.0",
   "description": "",
   "dependencies": {
@@ -13,10 +13,10 @@
     "svg-to-img": "2.0.9"
   },
   "scripts": {
-    "migrate:db": "./node_modules/.bin/knex migrate:latest",
-    "start": "yarn migrate:db && ./node_modules/.bin/pm2 start bot.js --watch",
+    "migrate": "./node_modules/.bin/knex migrate:latest",
+    "start": "./node_modules/.bin/pm2 start bot.js --watch --name=BNU_bot",
     "stop": "./node_modules/.bin/pm2 stop bot.js",
-    "logs": "./node_modules/.bin/pm2 logs"
+    "logs": "./node_modules/.bin/pm2 logs BNU_bot"
   },
   "author": "phamductinhkma@gmail.com",
   "license": "ISC"

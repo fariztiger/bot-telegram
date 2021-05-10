@@ -5,7 +5,7 @@ module.exports = {
   step1: "1. Follow Chanel Telegram BNU (1 point)",
   step2: "2. Join Group Telegram BNU (1 point)",
   step3: "3. Follow, Retweet, Like Twitter BNU (1 point)",
-  enterUser:  "Bind your twitter account",
+  enterUser:  "Bind your twitter account before check for step 3",
   check,
   keyPoint: "🅿️ Points",
   keyWallet,
@@ -35,7 +35,7 @@ See more information or need help, click keyboard *${keyRules}*.`
 \n👥 You can earn points by inviting other users to BNU Bot.
 \n👏 For each person you invite, you will get 1 point.
 \n⚠️ Only users who have never started BNU Bot before are valid.
-\n🔗 Your referral link：https://t.me/AbcdTest12345bot?start=${id}`
+\n🔗 Your referral link：https://t.me/BNU\\_Reward\\_Bot?start=${id}`
   },
   enterTw: "If you are done, enter your twitter account username so we can check it out.\nSend you twitter account starting with @:",
   unfinish: "You have unfinished task(s). Please complete task(s) and press Check.",

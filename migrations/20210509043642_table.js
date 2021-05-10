@@ -11,6 +11,7 @@ exports.up = async function (knex) {
       table.integer('step_input', 2).defaultTo(0).comment('step 1. inserting user twiiter, 2. input adress');
       table.boolean('is_done').defaultTo(0);
       table.string('ref');
+      table.string('captcha', 10);
       table.timestamp('created_at').defaultTo(knex.fn.now())
       table.timestamp('updated_at').defaultTo(knex.fn.now())
     })

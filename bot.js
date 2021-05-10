@@ -4,12 +4,12 @@ const token = process.env.TOKEN;
 const svgCaptcha = require('svg-captcha');
 const svgToImg = require("svg-to-img");
 
-const linkPostTwiiter = 'https://google.com';
-const linkChanelTele = 'https://t.me/joinchat/VgrTEbtiAPQ3NGI1';
-const linkGroupTele = 'https://t.me/joinchat/Ujq8TdVS2o8zNTk1';
+const linkPostTwiiter = process.env.POST_TWEETER;
+const linkChanelTele = process.env.LINK_CHANEL;
+const linkGroupTele = process.env.LINK_GROUP;
 
-const IDGroupTele = "-535595304";
-const IDChanelTele = "-1001444425909"
+const IDChanelTele = process.env.ID_CHANEL
+const IDGroupTele = process.env.ID_GROUP;
 
 const {
   getUsernameTwiiter,
