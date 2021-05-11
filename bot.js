@@ -203,7 +203,7 @@ Referral Points = ${refPoint}
 *Total Points = ${taskPoint+refPoint}*
 \nBEP20 (BSC) Address = ${textWl}
 Twitter = *${info.username_twitter}*
-Referral link = https://t.me/BSCS\\_Reward\\_Bot?start=${info.id_telegram}
+Referral link = https://t.me/BNU\\_Reward\\_Bot?start=${info.id_telegram}
 ℹ️ For each person you invite and he/she completed tasks, you will get 1 referral point.`,
     keyboards.done
   );
