@@ -1,8 +1,6 @@
 require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const token = process.env.TOKEN;
-const svgCaptcha = require('svg-captcha');
-const svgToImg = require("svg-to-img");
 
 const linkPostTwiiter = process.env.POST_TWEETER;
 const linkChanelTele = process.env.LINK_CHANEL;
@@ -12,6 +10,7 @@ const IDChanelTele = process.env.ID_CHANEL
 const IDGroupTele = process.env.ID_GROUP;
 
 const {
+  getInfoMem,
   getUsernameTwiiter,
   createMember,
   updateMember,
@@ -63,21 +62,11 @@ bot.onText(/\/start/, async (msg) => {
     return;
   }
   const ref = msg.text.replace("/start", "").trim();
-  const captcha = svgCaptcha.create();
-  const result = await createMember({...msg.from, ref, captcha: captcha.text});
+  const result = await createMember({...msg.from, ref, captcha: ''});
   if (result === 'done') {
     return bot.sendMessage(msg.chat.id, listText.done(msg.from.id), keyboards.done);
   }
   return bot.sendMessage(msg.chat.id, listText.startStep, {reply_markup: keyboards.main});
-  // if (result === 'old') {
-  //   return bot.sendMessage(msg.chat.id, listText.startStep, {reply_markup: keyboards.main});
-  // }
-  // const imgBase64 = await svgToImg.from(captcha.data).toPng({encoding: 'base64'});
-  // return bot.sendPhoto(
-  //   msg.chat.id,
-  //   Buffer.from(imgBase64, 'base64'),
-  //   {caption: listText.enterCaptcha, reply_markup: {inline_keyboard: [[{'text': 'Refresh', 'callback_data': 'df'}]]}}
-  // )
 })
 
 // validate enter text username and wallet
@@ -201,11 +190,21 @@ bot.onText(new RegExp(listText.keyPoint), async (msg) => {
     if (listStepDone[key]) taskPoint+=1;
   })
   const refPoint = await getPointRef(msg.from.id);
+  const info = await getInfoMem(msg.from.id);
+
+  const textWl = info.wallet_address.length
+    ? `*${info.wallet_address}`
+    : `(Not found, click *${listText.keyWallet}* to set your wallet)`
   return bot.sendMessage(
     msg.chat.id,
-    `Task  Points = ${taskPoint}
-\nReferral Points = ${refPoint}
-\n*Total Points = ${taskPoint+refPoint}*`,
+    `User ID = ${info.id_telegram}
+\nTask  Points = ${taskPoint}
+Referral Points = ${refPoint}
+*Total Points = ${taskPoint+refPoint}*
+\nBEP20 (BSC) Address = ${textWl}
+Twitter = *${info.username_twitter}*
+Referral link = https://t.me/BSCS\\_Reward\\_Bot?start=${info.id_telegram}
+ℹ️ For each person you invite and he/she completed tasks, you will get 1 referral point.`,
     {parse_mode: 'Markdown'}
   );
 })

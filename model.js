@@ -9,7 +9,7 @@ const STEP_WALLET = 2;
 const STEP_CAPTCHA = 3;
 
 module.exports = {
-  listUser,
+  getInfoMem,
   createMember,
   getUsernameTwiiter,
   updateMember,
@@ -23,10 +23,11 @@ module.exports = {
   STEP_NONE
 }
 
-async function listUser() {
-  return knex.select().from('members').then(async (rows) => {
-    return Promise.all(rows.map(async (row) => getNumDoc(row)))
-  })
+async function getInfoMem(id) {
+  return knex.select()
+    .from('members')
+    .where('id_telegram', id)
+    .first();
 }
 
 async function createMember(params) {
