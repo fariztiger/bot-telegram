@@ -193,7 +193,7 @@ bot.onText(new RegExp(listText.keyPoint), async (msg) => {
   const info = await getInfoMem(msg.from.id);
 
   const textWl = info.wallet_address.length
-    ? `*${info.wallet_address}`
+    ? `*${info.wallet_address}*`
     : `(Not found, click *${listText.keyWallet}* to set your wallet)`
   return bot.sendMessage(
     msg.chat.id,
