@@ -205,22 +205,22 @@ Referral Points = ${refPoint}
 Twitter = *${info.username_twitter}*
 Referral link = https://t.me/BSCS\\_Reward\\_Bot?start=${info.id_telegram}
 ℹ️ For each person you invite and he/she completed tasks, you will get 1 referral point.`,
-    {parse_mode: 'Markdown'}
+    keyboards.done
   );
 })
 bot.onText(new RegExp(listText.keyHelp), async (msg) => {
-  return bot.sendMessage(msg.chat.id, listText.desHelp,{parse_mode: 'Markdown'});
+  return bot.sendMessage(msg.chat.id, listText.desHelp, keyboards.done);
 })
 bot.onText(new RegExp(listText.keyRules), async (msg) => {
-    return bot.sendMessage(msg.chat.id, listText.desRules,{parse_mode: 'Markdown'});
+    return bot.sendMessage(msg.chat.id, listText.desRules, keyboards.done);
 })
 bot.onText(new RegExp(listText.keyWallet), async (msg) => {
   const wallet = await getWalletAddress(msg.from.id);
   if (!wallet) {
-    await bot.sendMessage(msg.chat.id, listText.sendAddress, { parse_mode: 'Markdown'});
+    await bot.sendMessage(msg.chat.id, listText.sendAddress, {parse_mode: 'Markdown'});
     await updateMember(msg.from.id, {step_input: STEP_WALLET});
     return;
   }
-  await bot.sendMessage(msg.chat.id, listText.addressWl(wallet), {parse_mode: 'Markdown'});
+  await bot.sendMessage(msg.chat.id, listText.addressWl(wallet), keyboards.done);
   await updateMember(msg.from.id, {step_input: STEP_NONE});
 })
