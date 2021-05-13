@@ -103,7 +103,6 @@ bot.onText(/\.*/, async (msg) => {
 });
 
 const checkFollowChanel = async (userId) => {
-  return { status: true, message: '' };
   try {
     const result = await bot.getChatMember(IDChanelTele, userId);
     if (result.status !== 'kicked' && result.status !== "left") return { status: true, message: '' };
@@ -114,7 +113,6 @@ const checkFollowChanel = async (userId) => {
 }
 
 const checkJoinGr = async (userId) => {
-  return { status: true, message: '' };
   try {
     const result = await bot.getChatMember(IDGroupTele, userId);
     if (result.status !== 'kicked' && result.status !== "left") return { status: true, message: '' };
@@ -159,7 +157,7 @@ async function checkStep(userId, msg) {
       }
     }
   })
-  // bot.editMessageReplyMarkup(tempStep, { chat_id: msg.chat.id, message_id: msg.message_id })
+  bot.editMessageReplyMarkup(tempStep, { chat_id: msg.chat.id, message_id: msg.message_id })
   return result;
 }
 
@@ -186,7 +184,8 @@ bot.onText(new RegExp(listText.keyPoint), async (msg) => {
   const listStepDone = {
     0: await checkFollowChanel(msg.from.id),
     1: await checkJoinGr(msg.from.id),
-    2: await checkStepTwitter(msg.from.id),
+    // 2: await checkStepTwitter(msg.from.id),
+    2: { status: true },
   };
   let taskPoint = 0;
   Object.keys(listStepDone).forEach((key) => {
@@ -195,7 +194,7 @@ bot.onText(new RegExp(listText.keyPoint), async (msg) => {
   const refPoint = await getPointRef(msg.from.id);
   const info = await getInfoMem(msg.from.id);
 
-  const textWl = info.wallet_address.length
+  const textWl = info.wallet_address
     ? `*${info.wallet_address}*`
     : `(Not found, click *${listText.keyWallet}* to set your wallet)`
   return bot.sendMessage(

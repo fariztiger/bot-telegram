@@ -65,10 +65,10 @@ See more information or need help, click keyboard *${keyRules}*.`
   },
   sendAddress: `*⚠️ Please enter it correctly as you are only allowed to enter once.
 \n👛 Send your BEP20 (BSC) address:*`,
-  twNotFollow: "tw not follow",
-  twNotReTweet: "tw not reweet",
-  twNotLike: "tw not like",
-  twNotUser: "u must bind username twitter",
-  teleNotFollow: "tele not follow",
-  teleNotJoin: "tele not join",
+  twNotFollow: "You haven't followed page twitter",
+  twNotReTweet: "You haven't retweet post twitter",
+  twNotLike: "You haven't like post twitter",
+  twNotUser: "You must bind username twitter",
+  teleNotFollow: "You haven't follow chanel telegram",
+  teleNotJoin: "You haven't join group telegram",
 }

@@ -12,6 +12,8 @@ const twitterClient = new TwitterClient({
   apiSecret: process.env.TW_SECRET,
   accessToken: process.env.TW_ACCESS_TOKEN,
   accessTokenSecret: process.env.TW_SECRET_ACCESS,
+  disableCache: true,
+  ttl: 120,
 });
 
 const idPage = process.env.TW_ID_PAGE
@@ -27,11 +29,11 @@ async function checkTwitter(usernameCheck) {
   try {
     const user = await roClient.v2.userByUsername(usernameCheck);
     const [retws, followers, listLikes ] = await Promise.all([
-      twitterClient.tweets.statusesRetweetsById({ id: idPost, count: '100' }),
+      twitterClient.tweets.statusesRetweetsById({ id: idPost }),
       twitterClient.accountsAndUsers.followersIds({user_id: idPage, stringify_ids: true}),
       twitterClient.tweets.favoritesList({screen_name: usernameCheck})
     ]);
-    console.log(user.data);
+
     // check follow
     for (let index = 0; index < followers.ids.length; index++) {
       if (followers.ids[index] == user.data.id) {
