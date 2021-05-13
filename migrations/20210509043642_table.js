@@ -6,6 +6,7 @@ exports.up = async function (knex) {
       table.string('username_telegram')
       table.string('first_name')
       table.string('last_name')
+      table.string('id_twitter')
       table.string('username_twitter').unique()
       table.string('wallet_address', 200)
       table.integer('step_input', 2).defaultTo(0).comment('step 1. inserting user twiiter, 2. input adress');
