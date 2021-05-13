@@ -62,8 +62,11 @@ async function checkTwitter(usernameCheck) {
     if (!check.isLiked) return { status: false, message: listText.twNotLike}
     return { status: true, message: 'Done mission'}
   } catch (error) {
-    console.log('Error Telegram: ', error.message);
-    return { status: false, message: 'Something errors'}
+    console.log('Error Telegram: ', error);
+    const message = error && error.code && error.code == 404
+      ? 'Not found user, please bind again username twiiter'
+      : 'Something errors' 
+    return { status: false, message }
   }
 }
 module.exports = checkTwitter;
