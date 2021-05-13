@@ -3,11 +3,11 @@ const TelegramBot = require('node-telegram-bot-api');
 
 const {
   getInfoMem,
-  getUsernameTwiiter,
+  getIDTwitter,
   createMember,
   updateMember,
   getStepInputCurrent,
-  checkUsernameTwiiter,
+  checkUniqueTwitter,
   getWalletAddress,
   getPointRef,
   STEP_USERNAME,
@@ -16,7 +16,7 @@ const {
 } = require('./model');
 
 const listText = require('./listText');
-const checkTwitter = require('./twitter');
+const { checkTwitter, getIdByUsername } = require('./twitter');
 
 const token = process.env.TOKEN;
 const linkPostTwiiter = process.env.POST_TWEETER;
@@ -74,10 +74,11 @@ bot.onText(/\.*/, async (msg) => {
     if (msg.text[0] !== "@") {
       return bot.sendMessage(msg.chat.id, listText.validTwiiter);
     }
-    const isDuplicate = await checkUsernameTwiiter(msg.text);
-    if (isDuplicate) {
-      return bot.sendMessage(msg.chat.id, listText.duplicateTw);
-    }
+    const idTw = await getIdByUsername(msg.text.substr(1));
+    if (!idTw) return bot.sendMessage(msg.chat.id, listText.notFoundTw);
+    const isDuplicate = await checkUniqueTwitter(msg.text);
+    if (isDuplicate) return bot.sendMessage(msg.chat.id, listText.duplicateTw);
+
     await bot.sendMessage(
       msg.chat.id,
       listText.accTwOk(msg.text),
@@ -85,7 +86,7 @@ bot.onText(/\.*/, async (msg) => {
     )
     await updateMember(
       msg.from.id,
-      { step_input: STEP_NONE, username_twitter: msg.text }
+      { step_input: STEP_NONE, username_twitter: msg.text, id_twitter: idTw }
     );
     return;
   }
@@ -123,9 +124,9 @@ const checkJoinGr = async (userId) => {
 }
 
 const checkStepTwitter = async (userId) => {
-  const username = await getUsernameTwiiter(userId);
-  if (!username) return { status: false, message: listText.twNotUser };
-  return checkTwitter(username.substr(1));
+  const idTw = await getIDTwitter(userId);
+  if (!idTw) return { status: false, message: listText.twNotUser };
+  return checkTwitter(idTw);
 }
 
 async function checkStep(userId, msg) {

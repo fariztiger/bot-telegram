@@ -71,4 +71,5 @@ See more information or need help, click keyboard *${keyRules}*.`
   twNotUser: "You must bind username twitter",
   teleNotFollow: "You haven't follow chanel telegram",
   teleNotJoin: "You haven't join group telegram",
+  notFoundTw: "Not found user twitter, please try again."
 }

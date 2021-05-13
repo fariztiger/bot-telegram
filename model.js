@@ -11,10 +11,10 @@ const STEP_CAPTCHA = 3;
 module.exports = {
   getInfoMem,
   createMember,
-  getUsernameTwiiter,
+  getIDTwitter,
   updateMember,
   getStepInputCurrent,
-  checkUsernameTwiiter,
+  checkUniqueTwitter,
   getWalletAddress,
   getPointRef,
   STEP_USERNAME,
@@ -65,12 +65,12 @@ async function getStepInputCurrent(memId) {
   return false;
 }
 
-async function getUsernameTwiiter(memId) {
+async function getIDTwitter(memId) {
   const member = await knex.select()
     .from('members')
     .where('id_telegram', memId)
     .first();
-  if (member && member.username_twitter) return member.username_twitter;
+  if (member && member.id_twitter) return member.id_twitter;
   return false;
 }
 
@@ -83,7 +83,7 @@ async function getWalletAddress(memId) {
   return false;
 }
 
-async function checkUsernameTwiiter(username) {
+async function checkUniqueTwitter(username) {
   const member = await knex.select()
     .from('members')
     .where('username_twitter', username)
