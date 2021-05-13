@@ -1,13 +1,5 @@
 require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
-const token = process.env.TOKEN;
-
-const linkPostTwiiter = process.env.POST_TWEETER;
-const linkChanelTele = process.env.LINK_CHANEL;
-const linkGroupTele = process.env.LINK_GROUP;
-
-const IDChanelTele = process.env.ID_CHANEL
-const IDGroupTele = process.env.ID_GROUP;
 
 const {
   getInfoMem,
@@ -20,28 +12,33 @@ const {
   getPointRef,
   STEP_USERNAME,
   STEP_WALLET,
-  STEP_CAPTCHA,
   STEP_NONE
 } = require('./model');
 
 const listText = require('./listText');
+const checkTwitter = require('./twitter');
 
-const bot = new TelegramBot(token, {
-  polling: true
-});
+const token = process.env.TOKEN;
+const linkPostTwiiter = process.env.POST_TWEETER;
+const linkChanelTele = process.env.LINK_CHANEL;
+const linkGroupTele = process.env.LINK_GROUP;
+
+const IDChanelTele = process.env.ID_CHANEL
+const IDGroupTele = process.env.ID_GROUP;
 
 const EVENT_CHECK_MISSION = 'check_mission';
 const EVENT_USERNAME = 'username_twitter';
-const EVENT_REFRESH_CAPTCHA = 'refresh_captcha';
+
+const bot = new TelegramBot(token, { polling: true });
 
 const keyboards = {
   main: {
     inline_keyboard: [
-      [{'text': listText.step1, "url": linkChanelTele}],
-      [{'text': listText.step2, "url": linkGroupTele}],
-      [{'text': listText.step3, "url": linkPostTwiiter}],
-      [{'text': listText.enterUser, 'callback_data': EVENT_USERNAME}],
-      [{'text': listText.check, 'callback_data': EVENT_CHECK_MISSION}],
+      [{ 'text': listText.step1, "url": linkChanelTele }],
+      [{ 'text': listText.step2, "url": linkGroupTele }],
+      [{ 'text': listText.step3, "url": linkPostTwiiter }],
+      [{ 'text': listText.enterUser, 'callback_data': EVENT_USERNAME }],
+      [{ 'text': listText.check, 'callback_data': EVENT_CHECK_MISSION }],
     ],
   },
   done: {
@@ -62,11 +59,11 @@ bot.onText(/\/start/, async (msg) => {
     return;
   }
   const ref = msg.text.replace("/start", "").trim();
-  const result = await createMember({...msg.from, ref, captcha: ''});
+  const result = await createMember({ ...msg.from, ref, captcha: '' });
   if (result === 'done') {
     return bot.sendMessage(msg.chat.id, listText.done(msg.from.id), keyboards.done);
   }
-  return bot.sendMessage(msg.chat.id, listText.startStep, {reply_markup: keyboards.main});
+  return bot.sendMessage(msg.chat.id, listText.startStep, { reply_markup: keyboards.main });
 })
 
 // validate enter text username and wallet
@@ -84,98 +81,104 @@ bot.onText(/\.*/, async (msg) => {
     await bot.sendMessage(
       msg.chat.id,
       listText.accTwOk(msg.text),
-      {parse_mode: "Markdown"}
+      { parse_mode: "Markdown" }
     )
     await updateMember(
       msg.from.id,
-      {step_input: STEP_NONE, username_twitter: msg.text}
+      { step_input: STEP_NONE, username_twitter: msg.text }
     );
     return;
   }
   if (step === STEP_WALLET) {
     if (!(/^(0x){1}[0-9a-fA-F]{40}$/i.test(msg.text))) {
-      return bot.sendMessage(msg.chat.id,listText.validWallet)
+      return bot.sendMessage(msg.chat.id, listText.validWallet)
     }
     await bot.sendMessage(msg.chat.id, listText.walletOk(msg.text), keyboards.done)
     await updateMember(
       msg.from.id,
-      {step_input: STEP_NONE, wallet_address: msg.text}
+      { step_input: STEP_NONE, wallet_address: msg.text }
     );
     return;
   }
 });
 
 const checkFollowChanel = async (userId) => {
+  return { status: true, message: '' };
   try {
     const result = await bot.getChatMember(IDChanelTele, userId);
-    if (result.status !== 'kicked' && result.status !== "left") return true;
-    return false;
+    if (result.status !== 'kicked' && result.status !== "left") return { status: true, message: '' };
+    return { status: false, message: listText.teleNotFollow };
   } catch (error) {
-    return false;
+    return { status: false, message: listText.teleNotFollow };
   }
 }
 
 const checkJoinGr = async (userId) => {
+  return { status: true, message: '' };
   try {
     const result = await bot.getChatMember(IDGroupTele, userId);
-    if (result.status !== 'kicked' && result.status !== "left") return true;
-    return false;
+    if (result.status !== 'kicked' && result.status !== "left") return { status: true, message: '' };
+    return { status: false, message: listText.teleNotJoin };
   } catch (error) {
-    return false;
+    return { status: false, message: listText.teleNotJoin };
   }
 }
 
-const checkTwiiter = async (userId) => {
-  return await getUsernameTwiiter(userId);
+const checkStepTwitter = async (userId) => {
+  const username = await getUsernameTwiiter(userId);
+  if (!username) return { status: false, message: listText.twNotUser };
+  return checkTwitter(username.substr(1));
 }
 
 async function checkStep(userId, msg) {
   const listStepDone = {
     0: await checkFollowChanel(userId),
     1: await checkJoinGr(userId),
-    2: await checkTwiiter(userId),
+    2: await checkStepTwitter(userId),
   };
 
   const tempStep = {
     inline_keyboard: [
-      [{'text': listText.step1, "url": linkChanelTele}],
-      [{'text': listText.step2, "url": linkGroupTele}],
-      [{'text': listText.step3, "url": linkPostTwiiter}],
-      [{'text': listText.enterUser, 'callback_data': EVENT_USERNAME}],
-      [{'text': listText.check, 'callback_data': EVENT_CHECK_MISSION}],
+      [{ 'text': listText.step1, "url": linkChanelTele }],
+      [{ 'text': listText.step2, "url": linkGroupTele }],
+      [{ 'text': listText.step3, "url": linkPostTwiiter }],
+      [{ 'text': listText.enterUser, 'callback_data': EVENT_USERNAME }],
+      [{ 'text': listText.check, 'callback_data': EVENT_CHECK_MISSION }],
     ]
   };
 
-  let allDone = 1;
+  const result = { status: true, message: ''};
   Object.keys(listStepDone).forEach((step) => {
-    if (listStepDone[step]) {
+    if (listStepDone[step].status) {
       tempStep.inline_keyboard[step][0].text += ' ✅'
     } else {
-      allDone = 0;
       tempStep.inline_keyboard[step][0].text += ' ❌'
+      if (result.status) {
+        result.status = listStepDone[step].status;
+        result.message = listStepDone[step].message;
+      }
     }
   })
-  bot.editMessageReplyMarkup(tempStep, {chat_id: msg.chat.id, message_id: msg.message_id})
-  return allDone;
+  // bot.editMessageReplyMarkup(tempStep, { chat_id: msg.chat.id, message_id: msg.message_id })
+  return result;
 }
 
 bot.on("callback_query", async (callbackQuery) => {
   const { id, message, data, from } = callbackQuery;
   if (data === EVENT_CHECK_MISSION) {
-    const isDone = await checkStep(from.id, message);
-    if (!isDone) {
-      return bot.answerCallbackQuery(id, {text: listText.unfinish});
+    const result = await checkStep(from.id, message);
+    if (!result.status) {
+      return bot.answerCallbackQuery(id, { text: result.message });
     }
-    await updateMember(from.id, {is_done: 1});
+    await updateMember(from.id, { is_done: 1 });
     return bot.sendMessage(message.chat.id, listText.done(from.id), keyboards.done);
   }
   if (data === EVENT_USERNAME) {
     bot.sendMessage(message.chat.id, listText.enterTw);
-    await updateMember(from.id, {step_input: STEP_USERNAME});
+    await updateMember(from.id, { step_input: STEP_USERNAME });
     bot.answerCallbackQuery(id);
     return;
   }
-  if (data = EVENT_REFRESH_CAPTCHA) {}
 });
 
 // =============== list event keyboard
@@ -183,11 +186,11 @@ bot.onText(new RegExp(listText.keyPoint), async (msg) => {
   const listStepDone = {
     0: await checkFollowChanel(msg.from.id),
     1: await checkJoinGr(msg.from.id),
-    2: await checkTwiiter(msg.from.id),
+    2: await checkStepTwitter(msg.from.id),
   };
   let taskPoint = 0;
   Object.keys(listStepDone).forEach((key) => {
-    if (listStepDone[key]) taskPoint+=1;
+    if (listStepDone[key].status) taskPoint += 1;
   })
   const refPoint = await getPointRef(msg.from.id);
   const info = await getInfoMem(msg.from.id);
@@ -200,7 +203,7 @@ bot.onText(new RegExp(listText.keyPoint), async (msg) => {
     `User ID = ${info.id_telegram}
 \nTask  Points = ${taskPoint}
 Referral Points = ${refPoint}
-*Total Points = ${taskPoint+refPoint}*
+*Total Points = ${taskPoint + refPoint}*
 \nBEP20 (BSC) Address = ${textWl}
 Twitter = *${info.username_twitter}*
 Referral link = https://t.me/BNU\\_Reward\\_Bot?start=${info.id_telegram}
@@ -212,15 +215,15 @@ bot.onText(new RegExp(listText.keyHelp), async (msg) => {
   return bot.sendMessage(msg.chat.id, listText.desHelp, keyboards.done);
 })
 bot.onText(new RegExp(listText.keyRules), async (msg) => {
-    return bot.sendMessage(msg.chat.id, listText.desRules, keyboards.done);
+  return bot.sendMessage(msg.chat.id, listText.desRules, keyboards.done);
 })
 bot.onText(new RegExp(listText.keyWallet), async (msg) => {
   const wallet = await getWalletAddress(msg.from.id);
   if (!wallet) {
-    await bot.sendMessage(msg.chat.id, listText.sendAddress, {parse_mode: 'Markdown'});
-    await updateMember(msg.from.id, {step_input: STEP_WALLET});
+    await bot.sendMessage(msg.chat.id, listText.sendAddress, { parse_mode: 'Markdown' });
+    await updateMember(msg.from.id, { step_input: STEP_WALLET });
     return;
   }
   await bot.sendMessage(msg.chat.id, listText.addressWl(wallet), keyboards.done);
-  await updateMember(msg.from.id, {step_input: STEP_NONE});
+  await updateMember(msg.from.id, { step_input: STEP_NONE });
 })

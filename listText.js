@@ -27,7 +27,7 @@ Those invited by others also have to complete 3 tasks so that inviters can get p
 3) You can require or invite your friends to join by clicking your only introduction link;
 4) Those you invite can get points after completing 3 tasks and they have to active in ByteNext Official [ENG] of ByteNext. Fake or inactive accounts cannot get rewards.
 \n⚠️NOTE:
-▫️ Every frauds are not accepted.
+▫️ Every friends are not accepted.
 ▫️ All participants have to meet the requirement on the number of #BNU cards.
 ▫️ Those who are invited need to be active in https://t.me/ByteNextOfficial.
 ▫️ Rewards will be sent within 1 week after the campaign ends.`,
@@ -59,12 +59,16 @@ See more information or need help, click keyboard *${keyRules}*.`
 \n⚠️ Only users who have never started BNU Reward Bot before are valid.
 \n🔗 Your referral link：https://t.me/BNU\\_Reward\\_Bot?start=${id}`
   },
-  enterTw: "If you are done, enter your twitter account username so we can check it out.\nSend you twitter account starting with @:",
-  unfinish: "You have unfinished task(s). Please complete task(s) and press Check.",
+  enterTw: "If you are done step 3, enter twitter username so we can check it out.\nSend you twitter account starting with @:",
   addressWl: (address) => {
     return `Your wallet BEP20 (BSC) address: *${address}*`;
   },
   sendAddress: `*⚠️ Please enter it correctly as you are only allowed to enter once.
 \n👛 Send your BEP20 (BSC) address:*`,
-  enterCaptcha: "Please enter the verification code:",
+  twNotFollow: "tw not follow",
+  twNotReTweet: "tw not reweet",
+  twNotLike: "tw not like",
+  twNotUser: "u must bind username twitter",
+  teleNotFollow: "tele not follow",
+  teleNotJoin: "tele not join",
 }
