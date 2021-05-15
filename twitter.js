@@ -77,14 +77,14 @@ async function checkTwitter(userId) {
     if (!check.isLiked) return { status: false, message: listText.twNotLike }
 
     //check follow
-    const followers = await roClient.v1.get('followers/list.json', { user_id: idPage })
-    for (let index = 0; index < followers.users.length; index++) {
-      if (followers.users[index].id == userId) {
-        check.isFollowed = 1
-        break;
-      }
-    }
-    if (!check.isFollowed) return { status: false, message: listText.twNotFollow }
+    // const followers = await roClient.v1.get('followers/list.json', { user_id: idPage })
+    // for (let index = 0; index < followers.users.length; index++) {
+    //   if (followers.users[index].id == userId) {
+    //     check.isFollowed = 1
+    //     break;
+    //   }
+    // }
+    // if (!check.isFollowed) return { status: false, message: listText.twNotFollow }
 
     return { status: true, message: 'Done mission' }
   } catch (error) {
