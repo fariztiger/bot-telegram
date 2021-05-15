@@ -132,9 +132,11 @@ const checkStepTwitter = async (userId) => {
 async function checkStep(userId, msg) {
   const listStepDone = {
     0: await checkFollowChanel(userId),
-    1: await checkJoinGr(userId),
-    2: await checkStepTwitter(userId),
+    1: await checkJoinGr(userId)
   };
+  if (listStepDone[0].status && listStepDone[1].status) {
+    listStepDone[2] = await checkStepTwitter(userId);
+  }
 
   const tempStep = {
     inline_keyboard: [
@@ -164,6 +166,11 @@ async function checkStep(userId, msg) {
 
 bot.on("callback_query", async (callbackQuery) => {
   const { id, message, data, from } = callbackQuery;
+  const info = await getInfoMem(from.id);
+  if (info.is_done) {
+    bot.answerCallbackQuery(id);
+    return bot.sendMessage(message.chat.id, listText.done(from.id), keyboards.done);
+  }
   if (data === EVENT_CHECK_MISSION) {
     const result = await checkStep(from.id, message);
     if (!result.status) {
@@ -182,6 +189,10 @@ bot.on("callback_query", async (callbackQuery) => {
 
 // =============== list event keyboard
 bot.onText(new RegExp(listText.keyPoint), async (msg) => {
+  const info = await getInfoMem(msg.from.id);
+  if (info.step_input != STEP_NONE) {
+    await updateMember(msg.from.id, { step_input: STEP_NONE });
+  }
   const listStepDone = {
     0: await checkFollowChanel(msg.from.id),
     1: await checkJoinGr(msg.from.id),
@@ -193,7 +204,6 @@ bot.onText(new RegExp(listText.keyPoint), async (msg) => {
     if (listStepDone[key].status) taskPoint += 1;
   })
   const refPoint = await getPointRef(msg.from.id);
-  const info = await getInfoMem(msg.from.id);
 
   const textWl = info.wallet_address
     ? `*${info.wallet_address}*`
@@ -212,9 +222,17 @@ Referral link = https://t.me/BNU\\_Reward\\_Bot?start=${info.id_telegram}
   );
 })
 bot.onText(new RegExp(listText.keyHelp), async (msg) => {
+  const info = await getInfoMem(msg.from.id);
+  if (info.step_input != STEP_NONE) {
+    await updateMember(msg.from.id, { step_input: STEP_NONE });
+  }
   return bot.sendMessage(msg.chat.id, listText.desHelp, keyboards.done);
 })
 bot.onText(new RegExp(listText.keyRules), async (msg) => {
+  const info = await getInfoMem(msg.from.id);
+  if (info.step_input != STEP_NONE) {
+    await updateMember(msg.from.id, { step_input: STEP_NONE });
+  }
   return bot.sendMessage(msg.chat.id, listText.desRules, keyboards.done);
 })
 bot.onText(new RegExp(listText.keyWallet), async (msg) => {
