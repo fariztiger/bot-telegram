@@ -41,7 +41,7 @@ async function getIdByUsername(usernameCheck) {
     if (!twInstance) return { status: false, message: 'limit' }
     const roClient = twInstance.readOnly;
     const user = await roClient.v1.get('/users/show.json', { screen_name: usernameCheck });
-    return user.id;
+    return user.id_str;
   } catch (error) {
     return false;
   }
