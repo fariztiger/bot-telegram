@@ -6,14 +6,10 @@ const idPage = process.env.TW_ID_PAGE
 const idPost = process.env.TW_ID_POST
 
 async function getInstance() {
-  const listIntance = [
-    new TwitterApi(process.env.TW_BEARER_TOKEN0),
-    new TwitterApi(process.env.TW_BEARER_TOKEN1),
-    new TwitterApi(process.env.TW_BEARER_TOKEN2),
-    new TwitterApi(process.env.TW_BEARER_TOKEN3),
-    new TwitterApi(process.env.TW_BEARER_TOKEN4),
-  ];
-
+  const amountKey = 11; 
+  const listIntance = Array.from(Array(amountKey).keys()).map(index => {
+    return new TwitterApi(process.env[`TW_BEARER_TOKEN${index}`])
+  })
   let temp = null;
   const genedNum = [];
   while (genedNum.length != listIntance.length) {
