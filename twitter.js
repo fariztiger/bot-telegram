@@ -6,30 +6,32 @@ const idPage = process.env.TW_ID_PAGE
 const idPost = process.env.TW_ID_POST
 
 async function getInstance() {
-  try {
-    const listIntance = [
-      new TwitterApi(process.env.TW_BEARER_TOKEN0),
-      new TwitterApi(process.env.TW_BEARER_TOKEN1),
-      new TwitterApi(process.env.TW_BEARER_TOKEN2),
-      new TwitterApi(process.env.TW_BEARER_TOKEN3),
-      new TwitterApi(process.env.TW_BEARER_TOKEN4),
-    ];
-    const result = listIntance.map(async (ins) => ins.v1.get(`application/rate_limit_status.json`));
-    const listResult = await Promise.all(result);
-    let indexMax = 0;
-    let remainMax = 0;
-    for (let index = 0; index < listResult.length; index++) {
-      const data = listResult[index];
-      const remaining = data.resources['followers']['/followers/list']['remaining'];
-      if (remaining > remainMax) {
-        remainMax = remaining
-        indexMax = index
+  const listIntance = [
+    new TwitterApi(process.env.TW_BEARER_TOKEN0),
+    new TwitterApi(process.env.TW_BEARER_TOKEN1),
+    new TwitterApi(process.env.TW_BEARER_TOKEN2),
+    new TwitterApi(process.env.TW_BEARER_TOKEN3),
+    new TwitterApi(process.env.TW_BEARER_TOKEN4),
+  ];
+
+  let temp = null;
+  const genedNum = [];
+  while (genedNum.length != listIntance.length) {
+    const random = Math.floor(Math.random() * listIntance.length);
+    if (genedNum.includes(random)) continue;
+    genedNum.push(random);
+    try {
+      const result = await listIntance[random].v1.get(`application/rate_limit_status.json`)
+      const remaining = result.resources['followers']['/followers/list']['remaining'];
+      if (+remaining > 1) {
+        temp = random;
+        break;
       }
+    } catch (error) {
+      continue;
     }
-    return listIntance[indexMax];
-  } catch (error) {
-    false;
   }
+  return temp !== null ? listIntance[temp] : false;
 }
 
 
@@ -38,7 +40,7 @@ async function getIdByUsername(usernameCheck) {
     const twInstance = await getInstance();
     if (!twInstance) return { status: false, message: 'limit' }
     const roClient = twInstance.readOnly;
-    const user = await roClient.v1.get('/users/show.json', {screen_name: usernameCheck});
+    const user = await roClient.v1.get('/users/show.json', { screen_name: usernameCheck });
     return user.id;
   } catch (error) {
     return false;

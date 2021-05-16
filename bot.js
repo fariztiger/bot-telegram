@@ -166,7 +166,9 @@ async function checkStep(userId, msg) {
 
 bot.on("callback_query", async (callbackQuery) => {
   const { id, message, data, from } = callbackQuery;
-  const info = await getInfoMem(from.id);
+  const msg = { chat: { id: message.chat.id }, from}
+  const info = await findOrCreate(msg);
+  if (!info) return;
   if (info.is_done) {
     bot.answerCallbackQuery(id);
     return bot.sendMessage(message.chat.id, listText.done(from.id), keyboards.done);
@@ -189,7 +191,8 @@ bot.on("callback_query", async (callbackQuery) => {
 
 // =============== list event keyboard
 bot.onText(new RegExp(listText.keyPoint), async (msg) => {
-  const info = await getInfoMem(msg.from.id);
+  const info = await findOrCreate(msg);
+  if (!info) return;
   if (info.step_input != STEP_NONE) {
     await updateMember(msg.from.id, { step_input: STEP_NONE });
   }
@@ -222,20 +225,24 @@ Referral link = https://t.me/BNU\\_Reward\\_Bot?start=${info.id_telegram}
   );
 })
 bot.onText(new RegExp(listText.keyHelp), async (msg) => {
-  const info = await getInfoMem(msg.from.id);
+  const info = await findOrCreate(msg);
+  if (!info) return;
   if (info.step_input != STEP_NONE) {
     await updateMember(msg.from.id, { step_input: STEP_NONE });
   }
   return bot.sendMessage(msg.chat.id, listText.desHelp, keyboards.done);
 })
 bot.onText(new RegExp(listText.keyRules), async (msg) => {
-  const info = await getInfoMem(msg.from.id);
+  const info = await findOrCreate(msg);
+  if (!info) return;
   if (info.step_input != STEP_NONE) {
     await updateMember(msg.from.id, { step_input: STEP_NONE });
   }
   return bot.sendMessage(msg.chat.id, listText.desRules, keyboards.done);
 })
 bot.onText(new RegExp(listText.keyWallet), async (msg) => {
+  const info = await findOrCreate(msg);
+  if (!info) return;
   const wallet = await getWalletAddress(msg.from.id);
   if (!wallet) {
     await bot.sendMessage(msg.chat.id, listText.sendAddress, { parse_mode: 'Markdown' });
@@ -245,3 +252,13 @@ bot.onText(new RegExp(listText.keyWallet), async (msg) => {
   await bot.sendMessage(msg.chat.id, listText.addressWl(wallet), keyboards.done);
   await updateMember(msg.from.id, { step_input: STEP_NONE });
 })
+
+async function findOrCreate(msg) {
+  const info = await getInfoMem(msg.from.id);
+  if (!info) {
+    createMember({ ...msg.from, ref: '', captcha: '' });
+    await bot.sendMessage(msg.chat.id, listText.startStep, { reply_markup: keyboards.main });
+    return false;
+  }
+  return info;
+}
