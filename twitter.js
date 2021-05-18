@@ -6,7 +6,7 @@ const idPage = process.env.TW_ID_PAGE
 const idPost = process.env.TW_ID_POST
 
 async function getInstance() {
-  const amountKey = 11; 
+  const amountKey = 16; 
   const listIntance = Array.from(Array(amountKey).keys()).map(index => {
     return new TwitterApi(process.env[`TW_BEARER_TOKEN${index}`])
   })
