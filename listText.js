@@ -19,11 +19,11 @@ Those invited by others also have to complete 3 tasks so that inviters can get p
 3) Rewards are given based on your points, which means that the more points you get, the more valuable reward you gain.
 4) Points that users gained in previous campaigns will be added to ensure equality for everyone.
 5) The reward will be sent within one week after the campaign ends. Please stay patient!
-\nTime: 3pm UTC, May ..... to June ......
+\nTime: Campaign starting date: *May 23, 2021*, closing date: *May 31, 2021*
 \n(This activity is just related to ByteNext Official [ENG])
 \n📢 How to win:
-1) Find @BNU_Reward_Bot in Telegram and enter/start to start the bot and follow the guidance;
-2) After you connect your #BNU BEP20 (unchangeable) with (@BNU_Reward_Bot), the only introduction link will come out immediately;
+1) Find @BNU\\_Reward\\_Bot in Telegram and enter/start to start the bot and follow the guidance;
+2) After you connect your #BNU BEP20 (unchangeable) with (@BNU\\_Reward\\_Bot), the only introduction link will come out immediately;
 3) You can require or invite your friends to join by clicking your only introduction link;
 4) Those you invite can get points after completing 3 tasks and they have to active in ByteNext Official [ENG] of ByteNext. Fake or inactive accounts cannot get rewards.
 \n⚠️NOTE:

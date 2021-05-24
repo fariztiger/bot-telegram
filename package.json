@@ -16,7 +16,7 @@
   "scripts": {
     "migrate": "./node_modules/.bin/knex migrate:latest",
     "start": "./node_modules/.bin/pm2 start bot.js --watch --name=BNU_bot",
-    "stop": "./node_modules/.bin/pm2 stop bot.js",
+    "stop": "./node_modules/.bin/pm2 stop BNU_bot",
     "logs": "./node_modules/.bin/pm2 logs BNU_bot"
   },
   "author": "phamductinhkma@gmail.com",
