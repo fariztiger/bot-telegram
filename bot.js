@@ -233,6 +233,7 @@ bot.onText(new RegExp(listText.keyHelp), async (msg) => {
   return bot.sendMessage(msg.chat.id, listText.desHelp, keyboards.done);
 })
 bot.onText(new RegExp(listText.keyRules), async (msg) => {
+  console.log('rules');
   const info = await findOrCreate(msg);
   if (!info) return;
   if (info.step_input != STEP_NONE) {
@@ -262,3 +263,11 @@ async function findOrCreate(msg) {
   }
   return info;
 }
+bot.onText(new RegExp('/clear'), async (msg) => {
+  bot.sendMessage(msg.chat.id, 'done',{
+    reply_markup: {
+      remove_keyboard: true
+    },
+    parse_mode: "Markdown"
+  })
+})
